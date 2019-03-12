@@ -17,6 +17,12 @@ _Important to note:_ the code is built on top of [Lasagne at commit cf1a23c21666
 
 The basic model included is dependent on [cuDNN](https://developer.nvidia.com/cudnn) (but not tested with the latest cuDNN 3 RC). I have, however, also made an export of the raw parameter values for the network using [export_params.py](https://github.com/JeffreyDF/kaggle_diabetic_retinopathy/blob/master/export_params.py). You could then replace the cuDNN layers by the layers of your choice or use these parameters to initialise layers in other frameworks.
 
+# SSH
+
+```
+ssh -L localhost:8888:localhost:8888 -i ~gpu.pem ubuntu@10.32.?.?
+```
+
 # Create an Environment
 
 ```
@@ -28,3 +34,17 @@ pip install -r requirements.txt
 jupyter lab
 source deactivate
 ```
+
+
+# On AWS EC2 for Deep Learning
+
+```
+#source activate theano_p27
+#pip uninstall Theano
+#pip install git+git://github.com/Theano/Theano.git@9a653e3e91c0e38b6643e4452199931e792a24a2
+#pip install --upgrade --no-deps git+git://github.com/Lasagne/Lasagne.git@cf1a23c21666fc0225a05d284134b255e3613335
+pip install --upgrade https://github.com/Lasagne/Lasagne/archive/master.zip
+```
+
+
+Ref.: https://developer.nvidia.com/rdp/cudnn-archive
