@@ -2,7 +2,8 @@ import lasagne as nn
 from lasagne import nonlinearities
 
 try:
-    from theano.sandbox.cuda import dnn
+    #from theano.sandbox.cuda import dnn
+    from theano.gpuarray import dnn
     from lasagne.layers.dnn import DNNLayer, conv_output_length
 except ImportError:
     print "No cudnn, not imported."
