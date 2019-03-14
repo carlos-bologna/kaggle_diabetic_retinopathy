@@ -33,21 +33,39 @@ for index, row in df.iterrows():
         a=cv2.imread(os.path.join(source_dir, row.folder, row.image + '.jpeg'))
         #scale img to a given radius
         a=scaleRadius(a,scale)
+
         #subtract local mean color
         a=cv2.addWeighted(a, 4, cv2.GaussianBlur(a,(0,0),scale/30), -4, 128)
+
         #remove outer 10%
         b=numpy.zeros(a.shape)
         cv2.circle(b,(a.shape[1]/2,a.shape[0]/2), int(scale * 0.9),(1,1,1), -1,8,0)
+
         #a= a * b + 128 * (1 - b)
         a = a * b
         # Crop image removing black border
         #r = calcRadius(a)
         r = image_size / 2
-        x_half = a.shape[0] / 2
-        y_half = a.shape[1] / 2
-        a = a[x_half - r:x_half + r, y_half - r:y_half + r, :]
+
+        h_half = a.shape[0] / 2
+        w_half = a.shape[1] / 2
+
+        if (r > h_half):
+             rh = h_half # Caso a figura ultrapasse o canvas, o raio é o limite do canvas.
+        else:
+             rh = r
+
+        if (r > w_half):
+             rw = w_half # Caso a figura ultrapasse o canvas, o raio é o limite do canvas.
+        else:
+             rw = r
+
+        a = a[h_half -  rh : h_half +  rh, w_half -  rw : w_half +  rw, :]
+
         cv2.imwrite(os.path.join(dest_dir, str(row.level), row.folder + '_' + row.image + '.jpeg'), a)
+
         if (index % 5000 == 0):
-            print 'Lote: ' + str(index) + '/' + str(tot_lote)
+            print 'Lote: ' + str(index % 5000) + '/' + str(tot_lote)
+
     except:
         print 'Error in ' + row.image
