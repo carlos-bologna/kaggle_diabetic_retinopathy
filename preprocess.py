@@ -7,6 +7,7 @@ scale=300
 image_size = 540
 source_dir='/media/carlos_bologna/WD_NTFS/Diabetic_Retinopathy/original_images/'
 dest_dir='data/'
+lote_size=3000
 
 def scaleRadius(img,scale):
     x=img[img.shape[0]/2,:,:].sum(1)
@@ -26,8 +27,9 @@ df_train['folder'] = 'train'
 df_test['folder'] = 'test'
 df = pd.concat([df_train.loc[:, ['folder', 'image', 'level']], df_test.loc[:, ['folder', 'image', 'level']]])
 
-tot_lote = len(df) / 5000
+tot_lote = len(df) / lote_size
 
+i=1
 for index, row in df.iterrows():
     try:
         a=cv2.imread(os.path.join(source_dir, row.folder, row.image + '.jpeg'))
@@ -50,22 +52,23 @@ for index, row in df.iterrows():
         h_half = a.shape[0] / 2
         w_half = a.shape[1] / 2
 
-        if (r > h_half):
-             rh = h_half # Caso a figura ultrapasse o canvas, o raio é o limite do canvas.
-        else:
-             rh = r
+        if (r > h_half) | (r > w_half):
 
-        if (r > w_half):
-             rw = w_half # Caso a figura ultrapasse o canvas, o raio é o limite do canvas.
-        else:
-             rw = r
+            #Calc max padding to apply (toward h or w)
+            pad = max(r - h_half, r - w_half)
 
-        a = a[h_half -  rh : h_half +  rh, w_half -  rw : w_half +  rw, :]
+            #Add padding
+            a = numpy.pad(a, ((pad,pad), (pad,pad), (0, 0)), 'constant')
+            h_half = a.shape[0] / 2
+            w_half = a.shape[1] / 2
+
+        a = a[h_half -  r : h_half +  r, w_half -  r : w_half +  r, :]
 
         cv2.imwrite(os.path.join(dest_dir, str(row.level), row.folder + '_' + row.image + '.jpeg'), a)
 
-        if (index % 5000 == 0):
-            print 'Lote: ' + str(index % 5000) + '/' + str(tot_lote)
+        if (index % lote_size == 0):
+            print 'Lote: ' + str(i) + '/' + str(tot_lote)
+            i+=1
 
     except:
         print 'Error in ' + row.image

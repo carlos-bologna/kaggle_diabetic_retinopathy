@@ -48,3 +48,17 @@ pip install --upgrade https://github.com/Lasagne/Lasagne/archive/master.zip
 
 
 Ref.: https://developer.nvidia.com/rdp/cudnn-archive
+
+# Images
+
+Delete these images from dataset, because they are in very bad shape:
+
+* train/492_right.jpeg
+* test/25313_right.jpeg
+* test/27096_right.jpeg
+
+# Steps to Train the Model
+
+* python2 preprocess.py
+* run split_data.ipynb
+* run train_keras.ipynb
